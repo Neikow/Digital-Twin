@@ -6,6 +6,10 @@ public class Fish : MonoBehaviour
 {
     FishSettings settings;
 
+    [HideInInspector]
+    // Size and mass of the fish
+    public float fishSize;
+
     // State
     [HideInInspector]
     public Vector3 position;
@@ -38,6 +42,9 @@ public class Fish : MonoBehaviour
         this.target = target;
         this.settings = settings;
 
+        fishSize = Random.Range(settings.minSize, settings.maxSize);
+        cachedTransform.localScale = Vector3.one * fishSize;
+
         position = cachedTransform.position;
         forward = cachedTransform.forward;
 
@@ -68,9 +75,7 @@ public class Fish : MonoBehaviour
             var cohesionForce = SteerTowards(offsetToFlockmatesCenter) * settings.cohesionWeight;
             var seperationForce = SteerTowards(avgAvoidanceHeading) * settings.seperateWeight;
 
-            acceleration += alignmentForce;
-            acceleration += cohesionForce;
-            acceleration += seperationForce;
+            acceleration += (alignmentForce + cohesionForce + seperationForce);
         }
 
         if (IsHeadingForCollision()) {
@@ -86,6 +91,7 @@ public class Fish : MonoBehaviour
         Vector3 dir = velocity / speed;
 
         speed = Mathf.Clamp(speed, settings.minSpeed, settings.maxSpeed);
+        
         velocity = dir * speed;
 
         cachedTransform.position += velocity * Time.deltaTime;
@@ -96,7 +102,8 @@ public class Fish : MonoBehaviour
 
     bool IsHeadingForCollision() {
         RaycastHit hit;
-        if (Physics.SphereCast(position, settings.boundsRadius, forward, out hit, settings.collisionAvoidDst, settings.obstacleMask)) {
+        // if (Physics.SphereCast(position, settings.boundsRadius, forward, out hit, settings.collisionAvoidDst, settings.obstacleMask)) {
+        if (Physics.SphereCast(position, fishSize, forward, out hit, settings.collisionAvoidDst, settings.obstacleMask)) {
             return true;
         } else {
             return false;
@@ -109,7 +116,8 @@ public class Fish : MonoBehaviour
         for (int i = 0; i < rayDirections.Length; i++) {
             Vector3 dir = cachedTransform.TransformDirection(rayDirections[i]);
             Ray ray = new Ray(position, dir);
-            if (!Physics.SphereCast(ray, settings.boundsRadius, settings.collisionAvoidDst, settings.obstacleMask)) {
+            // if (!Physics.SphereCast(ray, settings.boundsRadius, settings.collisionAvoidDst, settings.obstacleMask)) {
+            if (!Physics.SphereCast(ray, fishSize, settings.collisionAvoidDst, settings.obstacleMask)) {
                 return dir;
             }
         }

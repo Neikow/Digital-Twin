@@ -13,20 +13,22 @@ MonoBehaviour:
   m_Name: Settings
   m_EditorClassIdentifier: 
   color: {r: 1, g: 1, b: 1, a: 1}
-  fishCount: 500
-  spawnRadius: 8
-  minSpeed: 1
-  maxSpeed: 2
-  maxSteerForce: 2
+  fishCount: 300
+  spawnRadius: 4
+  minSize: 0.2
+  maxSize: 0.4
+  minSpeed: 0.4
+  maxSpeed: 0.6
+  maxSteerForce: 1
   perceptionRadius: 1.5
   avoidanceRadius: 0.8
-  alignWeight: 1
-  cohesionWeight: 1
-  seperateWeight: 3
-  targetWeight: 2
+  alignWeight: 0.3
+  cohesionWeight: 0.3
+  seperateWeight: 0.4
+  targetWeight: 0.4
   obstacleMask:
     serializedVersion: 2
-    m_Bits: 4294967295
-  boundsRadius: 0.4
-  avoidCollisionWeight: 20
-  collisionAvoidDst: 3
+    m_Bits: 1
+  boundsRadius: 0.5
+  avoidCollisionWeight: 3
+  collisionAvoidDst: 1

@@ -5,7 +5,6 @@ using UnityEngine;
 public class FishManager : MonoBehaviour {
 
   const int threadGroupsSize = 1024;
-
   public FishSettings settings;
   public ComputeShader compute;
   Fish[] fishes;
@@ -48,7 +47,7 @@ public class FishManager : MonoBehaviour {
         fishes[i].avgAvoidanceHeading = fishData[i].avoidanceHeading;
         fishes[i].numPerceivedFlockmates = fishData[i].numFlockmates;
 
-        fishes[i].UpdateFish ();
+        fishes[i].UpdateFish();
       }
 
       fishBuffer.Release ();

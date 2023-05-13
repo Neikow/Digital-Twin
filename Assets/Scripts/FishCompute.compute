@@ -12,7 +12,7 @@ struct Fish {
 };
 
 RWStructuredBuffer<Fish> fishes;
-int numFishes;
+uint numFishes;
 float viewRadius;
 float avoidRadius;
 
