@@ -11,9 +11,9 @@ public class FishManager : MonoBehaviour {
   Fish[] fishes;
 
   void Start () {
-    fishes = FindObjectsOfType<Fish> ();
+    fishes = FindObjectsOfType<Fish>();
     foreach (Fish f in fishes) {
-      f.Initialize (settings, null);
+      f.Initialize(settings, null);
     }
   }
 
@@ -28,7 +28,7 @@ public class FishManager : MonoBehaviour {
         fishData[i].direction = fishes[i].forward;
       }
 
-      var fishBuffer = new ComputeBuffer (numFishes, FishData.Size);
+      var fishBuffer = new ComputeBuffer(numFishes, FishData.Size);
 
       fishBuffer.SetData (fishData);
 

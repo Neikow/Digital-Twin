@@ -12,18 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c90f4503054f5f84aad5caa054603ec3, type: 3}
   m_Name: Settings
   m_EditorClassIdentifier: 
-  minSpeed: 2
-  maxSpeed: 5
-  perceptionRadius: 2.5
-  avoidanceRadius: 1
-  maxSteerForce: 3
+  color: {r: 1, g: 1, b: 1, a: 1}
+  fishCount: 500
+  spawnRadius: 8
+  minSpeed: 1
+  maxSpeed: 2
+  maxSteerForce: 2
+  perceptionRadius: 1.5
+  avoidanceRadius: 0.8
   alignWeight: 1
   cohesionWeight: 1
-  seperateWeight: 1
-  targetWeight: 1
+  seperateWeight: 3
+  targetWeight: 2
   obstacleMask:
     serializedVersion: 2
-    m_Bits: 0
-  boundsRadius: 0.27
-  avoidCollisionWeight: 10
-  collisionAvoidDst: 5
+    m_Bits: 4294967295
+  boundsRadius: 0.4
+  avoidCollisionWeight: 20
+  collisionAvoidDst: 3

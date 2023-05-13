@@ -8,7 +8,7 @@ public static class FishHelper {
 
   public static readonly Vector3[] directions;
 
-  static FishHelper () {
+  static FishHelper() {
     directions = new Vector3[FishHelper.numViewDirections];
 
     float goldenRatio = (1 + Mathf.Sqrt (5)) / 2;
