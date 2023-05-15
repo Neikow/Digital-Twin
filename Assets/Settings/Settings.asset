@@ -17,18 +17,18 @@ MonoBehaviour:
   spawnRadius: 4
   minSize: 0.2
   maxSize: 0.4
-  minSpeed: 0.4
-  maxSpeed: 0.6
-  maxSteerForce: 1
+  minSpeed: 0.2
+  maxSpeed: 0.4
+  maxSteerForce: 1.5
   perceptionRadius: 1.5
   avoidanceRadius: 0.8
   alignWeight: 0.3
-  cohesionWeight: 0.3
+  cohesionWeight: 0.1
   seperateWeight: 0.4
   targetWeight: 0.4
   obstacleMask:
     serializedVersion: 2
     m_Bits: 1
   boundsRadius: 0.5
-  avoidCollisionWeight: 3
-  collisionAvoidDst: 1
+  avoidCollisionWeight: 6
+  collisionAvoidDst: 1.5

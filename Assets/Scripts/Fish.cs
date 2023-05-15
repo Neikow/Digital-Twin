@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Fish : MonoBehaviour
 {
+    [HideInInspector]
     FishSettings settings;
 
     [HideInInspector]
@@ -70,6 +71,8 @@ public class Fish : MonoBehaviour
             centerOfFlockmates /= numPerceivedFlockmates;
 
             Vector3 offsetToFlockmatesCenter = (centerOfFlockmates - position);
+
+            Debug.DrawLine(position, centerOfFlockmates, Color.green);
 
             var alignmentForce = SteerTowards(avgFlockHeading) * settings.alignWeight;
             var cohesionForce = SteerTowards(offsetToFlockmatesCenter) * settings.cohesionWeight;

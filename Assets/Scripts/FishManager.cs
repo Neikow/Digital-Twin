@@ -29,17 +29,17 @@ public class FishManager : MonoBehaviour {
 
       var fishBuffer = new ComputeBuffer(numFishes, FishData.Size);
 
-      fishBuffer.SetData (fishData);
+      fishBuffer.SetData(fishData);
 
-      compute.SetBuffer (0, "fishes", fishBuffer);
-      compute.SetInt ("numFishes", fishes.Length);
-      compute.SetFloat ("viewRadius", settings.perceptionRadius);
-      compute.SetFloat ("avoidRadius", settings.avoidanceRadius);
+      compute.SetBuffer(0, "fishes", fishBuffer);
+      compute.SetInt("numFishes", fishes.Length);
+      compute.SetFloat("viewRadius", settings.perceptionRadius);
+      compute.SetFloat("avoidRadius", settings.avoidanceRadius);
 
-      int threadGroups = Mathf.CeilToInt (numFishes / (float) threadGroupsSize);
-      compute.Dispatch (0, threadGroups, 1, 1);
+      int threadGroups = Mathf.CeilToInt(numFishes / (float) threadGroupsSize);
+      compute.Dispatch(0, threadGroups, 1, 1);
 
-      fishBuffer.GetData (fishData);
+      fishBuffer.GetData(fishData);
 
       for (int i = 0; i < fishes.Length; i++) {
         fishes[i].avgFlockHeading = fishData[i].flockHeading;
@@ -50,7 +50,7 @@ public class FishManager : MonoBehaviour {
         fishes[i].UpdateFish();
       }
 
-      fishBuffer.Release ();
+      fishBuffer.Release();
     }
 
   }
