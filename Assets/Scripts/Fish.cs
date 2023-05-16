@@ -33,10 +33,13 @@ public class Fish : MonoBehaviour
     Material material;
     Transform cachedTransform;
     Transform target;
+    public bool isDead;
 
     void Awake () {
         material = transform.GetComponentInChildren<MeshRenderer>().material;
         cachedTransform = transform;
+
+        isDead = false;
     }
 
     public void Initialize(FishSettings settings, Transform target) {
@@ -60,6 +63,24 @@ public class Fish : MonoBehaviour
     }
 
     public void UpdateFish () {
+        if (isDead) {
+            Vector3 risingDirection = Vector3.up;
+
+            RaycastHit hit;
+            if (Physics.Raycast(cachedTransform.position, risingDirection, out hit, Mathf.Infinity, settings.obstacleMask)) {
+                if (hit.distance > 0.1f) {
+                    cachedTransform.position += risingDirection * fishSize * Time.deltaTime;
+                }
+                
+                if (cachedTransform.rotation.eulerAngles.z < 90) {
+                    cachedTransform.Rotate(Vector3.forward * Time.deltaTime * 10);
+                }
+
+            } else { }
+        
+            return;
+        }
+
         Vector3 acceleration = Vector3.zero;
 
         if (target != null) {
@@ -105,7 +126,6 @@ public class Fish : MonoBehaviour
 
     bool IsHeadingForCollision() {
         RaycastHit hit;
-        // if (Physics.SphereCast(position, settings.boundsRadius, forward, out hit, settings.collisionAvoidDst, settings.obstacleMask)) {
         if (Physics.SphereCast(position, fishSize, forward, out hit, settings.collisionAvoidDst, settings.obstacleMask)) {
             return true;
         } else {
@@ -119,7 +139,6 @@ public class Fish : MonoBehaviour
         for (int i = 0; i < rayDirections.Length; i++) {
             Vector3 dir = cachedTransform.TransformDirection(rayDirections[i]);
             Ray ray = new Ray(position, dir);
-            // if (!Physics.SphereCast(ray, settings.boundsRadius, settings.collisionAvoidDst, settings.obstacleMask)) {
             if (!Physics.SphereCast(ray, fishSize, settings.collisionAvoidDst, settings.obstacleMask)) {
                 return dir;
             }

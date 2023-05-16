@@ -136,7 +136,7 @@ PrefabInstance:
       objectReference: {fileID: 4614733691358621669, guid: cbcf6c02f2df50b43abfe188a6f39ac4, type: 3}
     - target: {fileID: 1722074991038536838, guid: df30b80e79dc240469cc21339a44cd0b, type: 3}
       propertyPath: showSpawnRegion
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2163366829513608794, guid: df30b80e79dc240469cc21339a44cd0b, type: 3}
       propertyPath: colour.b
@@ -651,6 +651,7 @@ GameObject:
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
   - component: {fileID: 963194230}
+  - component: {fileID: 963194231}
   m_Layer: 6
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -808,6 +809,15 @@ MonoBehaviour:
   m_BeforeTransparentBundles: []
   m_BeforeStackBundles: []
   m_AfterStackBundles: []
+--- !u!45 &963194231
+Skybox:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_CustomSkybox: {fileID: 2100000, guid: 12fde2d9a0c315944be1cb1b0efdf3ce, type: 2}
 --- !u!1 &1064781326
 GameObject:
   m_ObjectHideFlags: 0

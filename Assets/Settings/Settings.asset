@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Settings
   m_EditorClassIdentifier: 
   color: {r: 1, g: 1, b: 1, a: 1}
-  fishCount: 300
+  fishCount: 3000
   spawnRadius: 4
-  minSize: 0.2
-  maxSize: 0.4
+  minSize: 0.4
+  maxSize: 0.6
   minSpeed: 0.2
   maxSpeed: 0.4
   maxSteerForce: 1.5
