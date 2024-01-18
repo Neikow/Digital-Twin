@@ -5,6 +5,10 @@ using UnityEngine;
 [CreateAssetMenu]
 public class FishSettings : ScriptableObject {
   // Settings
+  [Header ("Aquarium Settings")]
+  public float baseTemperature = 288.13f; // 15°C
+  public float basePh = 7f;
+  
   [Header ("Spawner Settings")]
   public Color color = Color.white;
   public int fishCount = 100;
@@ -13,6 +17,7 @@ public class FishSettings : ScriptableObject {
   [Header ("Fish Settings")]
   public float minSize = .5f;
   public float maxSize = 2f;
+  public float density = .5f;
 
   [Header ("Speed & Rotation")]
   public float minSpeed = 2f;
@@ -28,6 +33,7 @@ public class FishSettings : ScriptableObject {
   public float cohesionWeight = 1f;
   public float seperateWeight = 1f;
   public float targetWeight = 1f;
+  public float fleeWeight = 0.5f;
 
 
   [Header ("Collisions")]

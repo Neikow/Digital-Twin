@@ -3,51 +3,59 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class FishManager : MonoBehaviour {
-
-  const int threadGroupsSize = 1024;
+  private const int ThreadGroupsSize = 1024;
+  private Fish[] _fishes;
   public FishSettings settings;
   public ComputeShader compute;
-  Fish[] fishes;
+
+  private static readonly int ViewRadius = Shader.PropertyToID("view_radius");
+  private static readonly int AvoidRadius = Shader.PropertyToID("avoid_radius");
+  private static readonly int NumFishes = Shader.PropertyToID("num_fishes");
+  private static readonly int Fishes = Shader.PropertyToID("fishes");
 
   void Start () {
-    fishes = FindObjectsOfType<Fish>();
-    foreach (Fish f in fishes) {
+    _fishes = FindObjectsOfType<Fish>();
+    foreach (Fish f in _fishes) {
       f.Initialize(settings, null);
     }
   }
 
   void Update () {
-    if (fishes != null) {
-
-      int numFishes = fishes.Length;
+    if (_fishes != null) {
+      var numFishes = _fishes.Length;
       var fishData = new FishData[numFishes];
-
-      for (int i = 0; i < fishes.Length; i++) {
-        fishData[i].position = fishes[i].position;
-        fishData[i].direction = fishes[i].forward;
+      
+      // Setting up the fish data inside the compute shader
+      for (var i = 0; i < _fishes.Length; i++) {
+        fishData[i].position = _fishes[i].position;
+        fishData[i].direction = _fishes[i].forward;
+        fishData[i].mass = _fishes[i].mass;
       }
 
       var fishBuffer = new ComputeBuffer(numFishes, FishData.Size);
 
       fishBuffer.SetData(fishData);
 
-      compute.SetBuffer(0, "fishes", fishBuffer);
-      compute.SetInt("numFishes", fishes.Length);
-      compute.SetFloat("viewRadius", settings.perceptionRadius);
-      compute.SetFloat("avoidRadius", settings.avoidanceRadius);
+      compute.SetBuffer(0, Fishes, fishBuffer);
+      compute.SetInt(NumFishes, _fishes.Length);
+      compute.SetFloat(ViewRadius, settings.perceptionRadius);
+      compute.SetFloat(AvoidRadius, settings.avoidanceRadius);
 
-      int threadGroups = Mathf.CeilToInt(numFishes / (float) threadGroupsSize);
+      var threadGroups = Mathf.CeilToInt(numFishes / (float) ThreadGroupsSize);
       compute.Dispatch(0, threadGroups, 1, 1);
 
+      // Getting the fish data from the compute shader
       fishBuffer.GetData(fishData);
 
-      for (int i = 0; i < fishes.Length; i++) {
-        fishes[i].avgFlockHeading = fishData[i].flockHeading;
-        fishes[i].centerOfFlockmates = fishData[i].flockCenter;
-        fishes[i].avgAvoidanceHeading = fishData[i].avoidanceHeading;
-        fishes[i].numPerceivedFlockmates = fishData[i].numFlockmates;
+      // Updating the fish data
+      for (var i = 0; i < _fishes.Length; i++) {
+        _fishes[i].avgFlockHeading = fishData[i].flockHeading;
+        _fishes[i].centerOfFlockmates = fishData[i].flockCenter;
+        _fishes[i].avgAvoidanceHeading = fishData[i].avoidanceHeading;
+        _fishes[i].numPerceivedFlockmates = fishData[i].numFlockmates;
+        _fishes[i].neighborDensity = fishData[i].neighborDensity;
 
-        fishes[i].UpdateFish();
+        _fishes[i].UpdateFish();
       }
 
       fishBuffer.Release();
@@ -55,20 +63,17 @@ public class FishManager : MonoBehaviour {
 
   }
 
-  public struct FishData {
+  private struct FishData {
     public Vector3 position;
     public Vector3 direction;
-
-  
     public Vector3 flockHeading;
     public Vector3 flockCenter;
     public Vector3 avoidanceHeading;
     public int numFlockmates;
+    public float mass;
+    public float neighborDensity;
 
-    public static int Size {
-        get {
-            return sizeof (float) * 3 * 5 + sizeof (int);
-        }
-    }
+    
+    public static int Size => 3 * 5 * sizeof(float) + 1 * sizeof(int) + 2 * sizeof(float);
   }
 }

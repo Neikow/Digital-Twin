@@ -12,21 +12,15 @@ public class Fish : MonoBehaviour
     public float fishSize;
 
     // State
-    [HideInInspector]
     public Vector3 position;
-    [HideInInspector]
     public Vector3 forward;
     Vector3 velocity;
 
     // To update:
     Vector3 acceleration;
-    [HideInInspector]
     public Vector3 avgFlockHeading;
-    [HideInInspector]
     public Vector3 avgAvoidanceHeading;
-    [HideInInspector]
     public Vector3 centerOfFlockmates;
-    [HideInInspector]
     public int numPerceivedFlockmates;
 
     // Cached
@@ -35,22 +29,40 @@ public class Fish : MonoBehaviour
     Transform target;
     public bool isDead;
 
-    void Awake () {
-        material = transform.GetComponentInChildren<MeshRenderer>().material;
-        cachedTransform = transform;
+    public float health; 
+    
+    public float mass;
 
+    private WaterQualityZone[] _waterQualityZones;
+
+    public float neighborDensity;
+
+    void Awake () {
+        cachedTransform = transform;
+        material = cachedTransform.GetComponentInChildren<MeshRenderer>().material;
         isDead = false;
+    }
+
+    public void SetWaterQualityZones(WaterQualityZone[] waterQualityZones)
+    {
+        _waterQualityZones = waterQualityZones;
     }
 
     public void Initialize(FishSettings settings, Transform target) {
         this.target = target;
         this.settings = settings;
 
+        health = 1.0f;
+        
         fishSize = Random.Range(settings.minSize, settings.maxSize);
         cachedTransform.localScale = Vector3.one * fishSize;
 
         position = cachedTransform.position;
         forward = cachedTransform.forward;
+        
+        mass = fishSize * settings.density * Random.Range(0.9f, 1.1f);
+        
+        neighborDensity = 12f;
 
         float startSpeed = Random.Range(settings.minSpeed, settings.maxSpeed);
         velocity = transform.forward * startSpeed;
@@ -66,28 +78,60 @@ public class Fish : MonoBehaviour
         if (isDead) {
             Vector3 risingDirection = Vector3.up;
 
-            RaycastHit hit;
-            if (Physics.Raycast(cachedTransform.position, risingDirection, out hit, Mathf.Infinity, settings.obstacleMask)) {
+            if (Physics.Raycast(cachedTransform.position, risingDirection, out var hit, Mathf.Infinity, settings.obstacleMask)) {
                 if (hit.distance > 0.1f) {
-                    cachedTransform.position += risingDirection * fishSize * Time.deltaTime;
+                    cachedTransform.position += risingDirection * (fishSize * Time.deltaTime);
                 }
                 
                 if (cachedTransform.rotation.eulerAngles.z < 90) {
-                    cachedTransform.Rotate(Vector3.forward * Time.deltaTime * 10);
+                    cachedTransform.Rotate(Vector3.forward * (Time.deltaTime * 10));
                 }
 
-            } else { }
-        
+            }
+            
             return;
         }
 
         Vector3 acceleration = Vector3.zero;
-
+        
         if (target != null) {
             Vector3 offsetToTarget = (target.position - position);
             acceleration = SteerTowards(offsetToTarget) * settings.targetWeight;
         }
+        
+        if (_waterQualityZones.Length != 0)
+        {
+            Vector3 offsetToWaterQualityZone = Vector3.zero;
+            float waterQualityZoneTemperature = settings.baseTemperature;
+            float waterQualityZonePh = settings.basePh;
+            foreach (var waterQualityZone in _waterQualityZones)
+            {
+                if (!waterQualityZone.IsInside(position))
+                {
+                    continue;
+                }
 
+                var zonePosition = waterQualityZone.transform.position;
+                Debug.DrawLine(position, zonePosition, Color.red);
+                Vector3 outwardDirection = waterQualityZone.GetOutwardDirection(position);
+                float distance = Vector3.Distance(position, zonePosition);
+                
+                float temperature = waterQualityZone.GetTemperatureAt(position, settings.baseTemperature);
+                float ph = waterQualityZone.GetPhAt(position, settings.basePh);
+
+                float tempMortality = MortalityRateHelper.FromTemperature(temperature);
+                float phMortality = MortalityRateHelper.FromPh(ph);
+                
+                offsetToWaterQualityZone += outwardDirection * distance;
+                waterQualityZoneTemperature = (waterQualityZoneTemperature + temperature) / 2;
+                waterQualityZonePh = (waterQualityZonePh + ph) / 2;
+            }
+            acceleration += SteerTowards(offsetToWaterQualityZone) * settings.fleeWeight;
+            Debug.Log("Density: " + neighborDensity);
+            Debug.Log("Temperature: " + waterQualityZoneTemperature);
+            Debug.Log("pH: " + waterQualityZonePh);
+        }
+        
         if (numPerceivedFlockmates != 0) {
             centerOfFlockmates /= numPerceivedFlockmates;
 
@@ -134,7 +178,7 @@ public class Fish : MonoBehaviour
     }
 
     Vector3 ObstacleRays() {
-        Vector3[] rayDirections = FishHelper.directions;
+        Vector3[] rayDirections = FishHelper.Directions;
 
         for (int i = 0; i < rayDirections.Length; i++) {
             Vector3 dir = cachedTransform.TransformDirection(rayDirections[i]);

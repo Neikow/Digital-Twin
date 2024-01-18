@@ -4,34 +4,44 @@ static const int threadGroupSize = 1024;
 struct Fish {
     float3 position;
     float3 direction;
+    float mass;
 
     float3 flockHeading;
     float3 flockCentre;
     float3 separationHeading;
+
+    float neighborDensity;
     int numFlockmates;
 };
 
 RWStructuredBuffer<Fish> fishes;
-uint numFishes;
-float viewRadius;
-float avoidRadius;
+uint num_fishes;
+float view_radius;
+float avoid_radius;
 
 [numthreads(threadGroupSize,1,1)]
 void CSMain (uint3 id : SV_DispatchThreadID)
 {
-    for (uint indexB = 0; indexB < numFishes; indexB ++) {
-        if (id.x != indexB) {
-            Fish fishB = fishes[indexB];
-            float3 offset = fishB.position - fishes[id.x].position;
-            float sqrDst = offset.x * offset.x + offset.y * offset.y + offset.z * offset.z;
+    for (uint fish_index = 0; fish_index < num_fishes; fish_index ++) {
+        fishes[id.x].neighborDensity = fishes[id.x].mass;
+        fishes[id.x].numFlockmates = 1;
+        if (id.x != fish_index) {
+            const Fish fish_other = fishes[fish_index];
+            float3 offset = fish_other.position - fishes[id.x].position;
+            const float sqr_dst = offset.x * offset.x + offset.y * offset.y + offset.z * offset.z;
 
-            if (sqrDst < viewRadius * viewRadius) {
+            if (sqr_dst < 1.0f)
+            {
+                fishes[id.x].neighborDensity += fish_other.mass;
+            }
+
+            if (sqr_dst < view_radius * view_radius) {
                 fishes[id.x].numFlockmates += 1;
-                fishes[id.x].flockHeading += fishB.direction;
-                fishes[id.x].flockCentre += fishB.position;
+                fishes[id.x].flockHeading += fish_other.direction;
+                fishes[id.x].flockCentre += fish_other.position;
 
-                if (sqrDst < avoidRadius * avoidRadius) {
-                    fishes[id.x].separationHeading -= offset / sqrDst;
+                if (sqr_dst < avoid_radius * avoid_radius) {
+                    fishes[id.x].separationHeading -= offset / sqr_dst;
                 }
             }
         }
