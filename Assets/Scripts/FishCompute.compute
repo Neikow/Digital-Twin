@@ -1,7 +1,8 @@
 #pragma kernel CSMain
 static const int threadGroupSize = 1024;
 
-struct Fish {
+struct Fish
+{
     float3 position;
     float3 direction;
     float mass;
@@ -9,6 +10,8 @@ struct Fish {
     float3 flockHeading;
     float3 flockCentre;
     float3 separationHeading;
+
+    uint isAlive;
 
     float neighborDensity;
     int numFlockmates;
@@ -20,12 +23,15 @@ float view_radius;
 float avoid_radius;
 
 [numthreads(threadGroupSize,1,1)]
-void CSMain (uint3 id : SV_DispatchThreadID)
+void CSMain(uint3 id : SV_DispatchThreadID)
 {
-    for (uint fish_index = 0; fish_index < num_fishes; fish_index ++) {
+    for (uint fish_index = 0; fish_index < num_fishes; fish_index++)
+    {
+        // reset the fish's flocking parameters
         fishes[id.x].neighborDensity = fishes[id.x].mass;
         fishes[id.x].numFlockmates = 1;
-        if (id.x != fish_index) {
+        if (id.x != fish_index)
+        {
             const Fish fish_other = fishes[fish_index];
             float3 offset = fish_other.position - fishes[id.x].position;
             const float sqr_dst = offset.x * offset.x + offset.y * offset.y + offset.z * offset.z;
@@ -35,12 +41,14 @@ void CSMain (uint3 id : SV_DispatchThreadID)
                 fishes[id.x].neighborDensity += fish_other.mass;
             }
 
-            if (sqr_dst < view_radius * view_radius) {
+            if (sqr_dst < view_radius * view_radius)
+            {
                 fishes[id.x].numFlockmates += 1;
                 fishes[id.x].flockHeading += fish_other.direction;
                 fishes[id.x].flockCentre += fish_other.position;
 
-                if (sqr_dst < avoid_radius * avoid_radius) {
+                if (sqr_dst < avoid_radius * avoid_radius)
+                {
                     fishes[id.x].separationHeading -= offset / sqr_dst;
                 }
             }

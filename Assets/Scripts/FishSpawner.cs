@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FishSpawner : MonoBehaviour
@@ -16,14 +14,14 @@ public class FishSpawner : MonoBehaviour
     public Fish prefab;
     public GizmoType showSpawnRegion;
 
-    void Awake()
+    private void Awake()
     {
-        WaterQualityZone[] waterQualityZones = FindObjectsOfType<WaterQualityZone>();
-        
+        var waterQualityZones = FindObjectsOfType<WaterQualityZone>();
+
         for (var i = 0; i < settings.fishCount; i++)
         {
-            Vector3 pos = transform.position + Random.insideUnitSphere * settings.spawnRadius;
-            Fish fish = Instantiate(prefab);
+            var pos = transform.position + Random.insideUnitSphere * settings.spawnRadius;
+            var fish = Instantiate(prefab);
             var t = fish.transform;
             t.position = pos;
             t.forward = Random.insideUnitSphere;
@@ -35,18 +33,12 @@ public class FishSpawner : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        if (showSpawnRegion == GizmoType.Always)
-        {
-            DrawGizmos();
-        }
+        if (showSpawnRegion == GizmoType.Always) DrawGizmos();
     }
 
     private void OnDrawGizmosSelected()
     {
-        if (showSpawnRegion == GizmoType.SelectedOnly)
-        {
-            DrawGizmos();
-        }
+        if (showSpawnRegion == GizmoType.SelectedOnly) DrawGizmos();
     }
 
     private void DrawGizmos()

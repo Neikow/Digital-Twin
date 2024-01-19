@@ -755,6 +755,7 @@ MonoBehaviour:
   temperatureActive: 0
   temperature: 291.15
   temperatureDecay: 0.2
+  mortalityRateSettings: {fileID: 11400000, guid: 6823744b758a9744698b98a408a8c097, type: 2}
 --- !u!23 &1302940369
 MeshRenderer:
   m_ObjectHideFlags: 0

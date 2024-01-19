@@ -1,30 +1,30 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public static class FishHelper {
+public static class FishHelper
+{
+    private const int NumViewDirections = 300;
 
-  const int NumViewDirections = 300;
+    public static readonly Vector3[] Directions;
 
-  public static readonly Vector3[] Directions;
+    static FishHelper()
+    {
+        Directions = new Vector3[NumViewDirections];
 
-  static FishHelper() {
-    Directions = new Vector3[NumViewDirections];
+        var goldenRatio = (1 + Mathf.Sqrt(5)) / 2;
 
-    float goldenRatio = (1 + Mathf.Sqrt (5)) / 2;
+        var angleIncrement = Mathf.PI * 2 * goldenRatio;
 
-    float angleIncrement = Mathf.PI * 2 * goldenRatio;
+        for (var i = 0; i < NumViewDirections; i++)
+        {
+            var t = (float)i / NumViewDirections;
+            var inclination = Mathf.Acos(1 - 2 * t);
+            var azimuth = angleIncrement * i;
 
-    for (int i = 0; i < NumViewDirections; i++) {
-      float t = (float) i / NumViewDirections;
-      float inclination = Mathf.Acos (1 - 2 * t);
-      float azimuth = angleIncrement * i;
+            var x = Mathf.Sin(inclination) * Mathf.Cos(azimuth);
+            var y = Mathf.Sin(inclination) * Mathf.Sin(azimuth);
+            var z = Mathf.Cos(inclination);
 
-      float x = Mathf.Sin (inclination) * Mathf.Cos (azimuth);
-      float y = Mathf.Sin (inclination) * Mathf.Sin (azimuth);
-      float z = Mathf.Cos (inclination);
-
-      Directions[i] = new Vector3 (x, y, z);
+            Directions[i] = new Vector3(x, y, z);
+        }
     }
-  }
 }
