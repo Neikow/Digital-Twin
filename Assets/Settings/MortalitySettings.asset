@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 183fb142cfdd4c0fbce085c6bec27802, type: 3}
+  m_Name: MortalitySettings
+  m_EditorClassIdentifier: 
+  tempMin: 279.55
+  tempMax: 289.35
+  tempDecay: 10
+  densityMax: 40
+  densityDecay: 0.3
+  pHMin: 6.5
+  pHMax: 7.5
+  pHDecay: 10
+  foodDecay: 0.1
